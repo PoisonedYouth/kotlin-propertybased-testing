@@ -71,7 +71,7 @@ internal class ApplicationServiceTest {
         val exception = shouldThrow<IllegalArgumentException> {
             applicationService.createOutput(inputDto)
         }
-        exception.message shouldBe "Sum of positions amount must be greater than 0.0 but is EUR -9.90"
+        exception.message shouldBe "Sum of positions amount must be greater than 0.0 but is -9.899999999999999"
     }
 
     @Test

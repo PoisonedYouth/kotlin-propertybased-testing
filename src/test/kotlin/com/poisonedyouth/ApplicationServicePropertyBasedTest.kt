@@ -39,7 +39,7 @@ fun createInputPositionsArb() = arbitrary {
     val amountOfPositions = amountPositionsArb.bind()
     var totalSum = 0.0
     repeat(amountOfPositions) {
-        val value = valueArb.bind().setScale(2, RoundingMode.HALF_UP).toDouble()
+        val value = valueArb.bind().setScale(Arb.int(0..10).bind(), RoundingMode.HALF_UP).toDouble()
         totalSum += value
         positions.add(createInputPositionArb(value).bind())
     }

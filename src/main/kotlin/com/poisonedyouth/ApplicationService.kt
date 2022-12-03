@@ -80,7 +80,7 @@ data class OutputPositionDto(
 )
 
 fun Double.toEURCurrency(): MonetaryAmount {
-    return BigDecimal(this, MathContext(2, RoundingMode.HALF_UP))
+    return BigDecimal(this, MathContext(5, RoundingMode.HALF_UP))
         .ofCurrency<FastMoney>("EUR".asCurrency(), typedMonetaryContext<FastMoney> {
         setPrecision(2)
     })
