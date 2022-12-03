@@ -2,14 +2,16 @@ package com.poisonedyouth
 
 import nl.hiddewieringa.money.asCurrency
 import nl.hiddewieringa.money.ofCurrency
-import nl.hiddewieringa.money.plus
 import nl.hiddewieringa.money.typedMonetaryContext
 import org.javamoney.moneta.FastMoney
+import java.math.BigDecimal
+import java.math.MathContext
+import java.math.RoundingMode
 import java.time.LocalDate
 import javax.money.MonetaryAmount
 
-private val minDate = LocalDate.of(2022, 1, 1)
-private val maxDate = LocalDate.of(2022, 12, 31)
+val minDate: LocalDate = LocalDate.of(2022, 1, 1)
+val maxDate: LocalDate = LocalDate.of(2022, 12, 31)
 
 class ApplicationService {
 
@@ -28,8 +30,11 @@ class ApplicationService {
     }
 
     private fun mapInputPositionToOutputPosition(positions: List<InputPositionDto>): List<OutputPositionDto> {
-        val sum = positions.fold(0.0.toEURCurrency()) { acc, next -> acc.plus(next.value.toEURCurrency()) }
-        require(sum >= 0.0.toEURCurrency()) {
+        require(positions.isNotEmpty()) {
+            "Positions must not be empty."
+        }
+        val sum = positions.fold(0.0) { acc, next -> acc + next.value }
+        require(sum.compareTo(0.0) > -1) {
             "Sum of positions amount must be greater than 0.0 but is $sum"
         }
         return positions.map {
@@ -75,7 +80,8 @@ data class OutputPositionDto(
 )
 
 fun Double.toEURCurrency(): MonetaryAmount {
-    return this.ofCurrency<FastMoney>("EUR".asCurrency(), typedMonetaryContext<FastMoney> {
+    return BigDecimal(this, MathContext(2, RoundingMode.HALF_UP))
+        .ofCurrency<FastMoney>("EUR".asCurrency(), typedMonetaryContext<FastMoney> {
         setPrecision(2)
     })
 }
